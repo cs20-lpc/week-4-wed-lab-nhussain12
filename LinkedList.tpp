@@ -3,7 +3,7 @@ LinkedList<T>::LinkedList()
 : head(nullptr) { }
 
 template <typename T>
-LinkedList<T>::LinkedList(const LinkedList<T>& copyObj) {
+LinkedList<T>::LinkedList(const LinkedList<T>& copyObj) : head(nullptr) {
     copy(copyObj);
 }
 
@@ -57,6 +57,24 @@ void LinkedList<T>::clear() {
 template <typename T>
 void LinkedList<T>::copy(const LinkedList<T>& copyObj) {
     // TODO
+    clear();
+    this->length = 0;
+    if (copyObj.isEmpty()) {
+        return;
+    } else {
+        head = new Node(copyObj.head->value);
+        this->length++;
+
+        Node* curr = head;
+        Node* copy = copyObj.head->next;
+        
+        while(copy != nullptr) {
+            curr->next = new Node(copy->value);
+            copy = copy->next;
+            curr = curr->next;
+            this->length++;
+        }
+    }
 }
 
 template <typename T>
@@ -82,6 +100,26 @@ int LinkedList<T>::getLength() const {
 template <typename T>
 void LinkedList<T>::insert(int position, const T& elem) {
     // TODO
+    // Exception Handling
+    if (position < 0 || position >= this->length) {
+        throw string("insert: error, position out of bounds");
+    }
+
+    // Function Implementation
+    Node* new_node = new Node(elem);
+    Node* curr = head;
+
+    if(head == nullptr) {
+        new_node->next = head;
+        head = new_node;
+    } else {
+        for(int i = 0; i < position-1; i++) {
+            curr = curr->next;
+        }
+        new_node->next = curr->next;
+        curr->next = new_node;
+    }
+    this->length++;
 }
 
 template <typename T>
@@ -92,6 +130,26 @@ bool LinkedList<T>::isEmpty() const {
 template <typename T>
 void LinkedList<T>::remove(int position) {
     // TODO
+    // Exception Handling
+    if(position < 0 || position >= this->length) {
+        throw string("remove: error, position out of bounds");
+    }
+
+    // Function Implementation
+    Node* mustDelete;
+    if(position == 0) {
+        mustDelete = head;
+        head = head->next;
+    } else {
+        Node* prev = head;
+        for(int i = 0; i < position-1; i++) {
+            prev = prev->next;
+        }
+        mustDelete = prev->next;
+        prev->next = mustDelete->next;
+    }
+    delete mustDelete;
+    this->length--;
 }
 
 template <typename T>
